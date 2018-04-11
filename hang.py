@@ -75,7 +75,7 @@ class AssistantOfHangman():
             self.attemptedLetters.add(self.guess)
             self.chancesRemaing -= 1
             self.result = 'Oops! That letter is not in my word: '
-            if secretWord.numOfNotFoundLetters > self.chancesRemaing or self.chancesRemaing == 0:
+            if self.chancesRemaing == 0:
                 self.gameOver = True
 
     def printResultOfEvaluate(self, lettersLeft, wordFound):
@@ -117,10 +117,7 @@ def hangman():
     else:
         if secretWord.wasWordFound:
             print('Congratulations, you won!')
-        elif assistant.chancesRemaing != 0:
-            print('Sorry, but you do not have enough chastity to guess the missing letters of the word.')
-            print('The word was', secretWord.word)
-        else:
+        elif assistant.isGameOver:
             print('Sorry, you ran out of guesses. The word was', secretWord.word)
 
 
