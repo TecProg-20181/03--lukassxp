@@ -2,7 +2,7 @@
 
 Jogo: Forca.
 O jogador deve acertar a palavra proposta.
-É informada a quantidade de letrasna palavra em questão.
+É informada a quantidade de letras na palavra em questão.
 O jogador deve tentar adivinhar letras que compoem a palavra.
 Caso acerte toda a palavra, ele vence. Caso contrário, perde.
 
@@ -14,6 +14,8 @@ O código do programa está no arquivo `hang.py`.
 É necessário um arquivo que contenha as palavras que podem ser escolhidas.
 Nesse projeto estão dois arquivos de exemplo `words.txt` e `palavras.txt`.
 O arquivo a ser utilizado como pool de palavras está designado no código-fonte.
+O usuário deve se certificar que, ao menos uma palavra no arquivo utilizado como pool de palavras, atende ao critério de o número de letras distintas na palavra ser menor ou igual a quantidade de tentativas disponivéis.
+O número de tentativas está designado no código fonte.
 
 Rodar o projeto
 ------
@@ -21,6 +23,5 @@ Rodar o projeto
 Para executar o projeto, use o comando:
 
 ```
-python hang.py
+python3 hang.py
 ```
-
