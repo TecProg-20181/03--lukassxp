@@ -102,7 +102,7 @@ def hangman():
 
     secretWord = SecretWord(random.choice(assistant.wordList))
     while not assistant.isValidSecretWord(secretWord.numOfNotFoundLetters):
-        secretWord = secretWord = SecretWord(random.choice(assistant.wordList))
+        secretWord = SecretWord(random.choice(assistant.wordList))
 
     assistant.printWelcomeText(secretWord.numOfLetters, secretWord.numOfNotFoundLetters)
     print('-------------')
