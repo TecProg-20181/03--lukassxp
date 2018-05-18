@@ -7,84 +7,100 @@ NUM_CHANCES = 8
 
 class SecretWord():
     def __init__(self, word):
-        self.word = word
-        self.numOfLetters = len(word)
-        self.notFoundLetters = set(self.word)
-        self.foundLetters = set()
+        self._word = word
+        self._numOfLetters = len(word)
+        self._notFoundLetters = set(self._word)
+        self._foundLetters = set()
+
+    @property
+    def word(self):
+        return self._word
+
+    @property
+    def foundLetters(self):
+        return self._foundLetters
+
+    @property
+    def notFoundLetters(self):
+        return self._notFoundLetters
+
+    @property
+    def numOfLetters(self):
+        return self._numOfLetters
 
     @property
     def numOfNotFoundLetters(self):
-        return len(self.notFoundLetters)
+        return len(self._notFoundLetters)
 
     @property
     def wasWordFound(self):
-        if self.numOfNotFoundLetters != 0:
-            return False
-        return True
+        return (False if not self.numOfNotFoundLetters == 0 else True)
 
     @property
     def wordFound(self):
         wordFound = ''
-        for letter in self.word:
-            if letter in self.foundLetters:
-                wordFound += letter
-            else:
-                wordFound += '_'
+        for letter in self._word:
+            wordFound += (letter if letter in self._foundLetters else '_')
+
         return wordFound
 
 
 class AssistantOfHangman():
     def __init__(self):
-        self.chancesRemaing = NUM_CHANCES
-        self.attemptedLetters = set()
-        self.acceptedLetters = set(string.ascii_lowercase)
-        self.guess = ''
-        self.result = ''
-        self.gameOver = False
-        self.wordList = []
+        self._chancesRemaing = NUM_CHANCES
+        self._attemptedLetters = set()
+        self._acceptedLetters = set(string.ascii_lowercase)
+        self._guess = ''
+        self._result = ''
+        self._gameOver = False
+        self._wordList = []
+
+    @property
+    def wordList(self):
+        return self._wordList
 
     def isValidSecretWord(self, distinctLetters):
-        if distinctLetters > NUM_CHANCES:
-            return False
-        return True
+        return (False if distinctLetters > NUM_CHANCES else True)
 
     @property
     def printAvaliableLetters(self):
-        print('Available letters', sorted(self.acceptedLetters - self.attemptedLetters))
+        print('Available letters',
+              sorted(self._acceptedLetters - self._attemptedLetters))
 
     def printWelcomeText(self, letters, distinctLetters):
         print('Welcome to the game of Hangam!')
-        print('I am thinking of a word with', letters, 'in all and', distinctLetters, 'different letters.')
+        print('I am thinking of a word with', letters,
+              'in all and', distinctLetters, 'different letters.')
 
     @property
     def printChancesRemaing(self):
-        print('You have', self.chancesRemaing, 'chances remaing.')
+        print('You have', self._chancesRemaing, 'chances remaing.')
 
     @property
     def askGuess(self):
-        self.guess = input('Please guess a letter: ')
+        self._guess = input('Please guess a letter: ')
 
-    def evaluateGuess(self, secretWord):
-        if self.guess in self.attemptedLetters:
-            self.result = 'Oops! You have already guessed that letter: '
-        elif self.guess in secretWord.notFoundLetters:
-            secretWord.foundLetters.add(self.guess)
-            secretWord.notFoundLetters.discard(self.guess)
-            self.result = 'Good Guess: '
+    def evaluateGuess(self, notFoundLetters, foundLetters):
+        if self._guess in self._attemptedLetters:
+            self._result = 'Oops! You have already guessed that letter: '
+        elif self._guess in notFoundLetters:
+            foundLetters.add(self._guess)
+            notFoundLetters.discard(self._guess)
+            self._result = 'Good Guess: '
         else:
-            self.attemptedLetters.add(self.guess)
-            self.chancesRemaing -= 1
-            self.result = 'Oops! That letter is not in my word: '
-            if self.chancesRemaing == 0:
-                self.gameOver = True
+            self._attemptedLetters.add(self._guess)
+            self._chancesRemaing -= 1
+            self._result = 'Oops! That letter is not in my word: '
+            if self._chancesRemaing == 0:
+                self._gameOver = True
 
     def printResultOfEvaluate(self, lettersLeft, wordFound):
-        print(self.result, wordFound)
+        print(self._result, wordFound)
         print("Distinct letters remaining to discover: ", lettersLeft)
 
     @property
     def isGameOver(self):
-        return self.gameOver
+        return self._gameOver
 
     @property
     def loadWordList(self):
@@ -92,8 +108,8 @@ class AssistantOfHangman():
         inFile = open(WORDLIST_FILENAME, 'r')
         line = inFile.readline()
         inFile.close()
-        self.wordList = line.split()
-        print(len(self.wordList), "words loaded.")
+        self._wordList = line.split()
+        print(len(self._wordList), "words loaded.")
 
 
 def hangman():
@@ -104,21 +120,25 @@ def hangman():
     while not assistant.isValidSecretWord(secretWord.numOfNotFoundLetters):
         secretWord = SecretWord(random.choice(assistant.wordList))
 
-    assistant.printWelcomeText(secretWord.numOfLetters, secretWord.numOfNotFoundLetters)
+    assistant.printWelcomeText(secretWord.numOfLetters,
+                               secretWord.numOfNotFoundLetters)
     print('-------------')
 
     while not secretWord.wasWordFound and not assistant.isGameOver:
         assistant.printChancesRemaing
         assistant.printAvaliableLetters
         assistant.askGuess
-        assistant.evaluateGuess(secretWord)
-        assistant.printResultOfEvaluate(secretWord.numOfNotFoundLetters, secretWord.wordFound)
+        assistant.evaluateGuess(secretWord.notFoundLetters,
+                                secretWord.foundLetters)
+        assistant.printResultOfEvaluate(secretWord.numOfNotFoundLetters,
+                                        secretWord.wordFound)
         print('------------')
     else:
         if secretWord.wasWordFound:
             print('Congratulations, you won!')
         elif assistant.isGameOver:
-            print('Sorry, you ran out of guesses. The word was', secretWord.word)
+            print('Sorry, you ran out of guesses. The word was',
+                  secretWord.word)
 
 
 hangman()
