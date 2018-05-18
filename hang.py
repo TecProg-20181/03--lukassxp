@@ -78,7 +78,10 @@ class AssistantOfHangman():
 
     @property
     def askGuess(self):
-        self._guess = input('Please guess a letter: ')
+        self._guess = input('Please guess a letter: ').lower()
+        if self._guess not in self._acceptedLetters:
+            print("Invalid input!")
+            self.askGuess
 
     def evaluateGuess(self, notFoundLetters, foundLetters):
         if self._guess in self._attemptedLetters:
