@@ -59,13 +59,13 @@ class AssistantOfHangman():
     def wordList(self):
         return self._wordList
 
-    def isValidSecretWord(self, distinctLetters):
+    def isValidTamSecretWord(self, distinctLetters):
         return (False if distinctLetters > NUM_CHANCES else True)
 
     @property
     def printAvaliableLetters(self):
-        print('Available letters',
-              sorted(self._acceptedLetters - self._attemptedLetters))
+        temp = sorted(self._acceptedLetters - self._attemptedLetters)
+        print('Not attempted letters: ', ''.join(i + ' - ' for i in temp))
 
     def printWelcomeText(self, letters, distinctLetters):
         print('Welcome to the game of Hangam!')
@@ -89,6 +89,7 @@ class AssistantOfHangman():
         elif self._guess in notFoundLetters:
             foundLetters.add(self._guess)
             notFoundLetters.discard(self._guess)
+            self._attemptedLetters.add(self._guess)
             self._result = 'Good Guess: '
         else:
             self._attemptedLetters.add(self._guess)
@@ -108,11 +109,17 @@ class AssistantOfHangman():
     @property
     def loadWordList(self):
         print("Loading word list from file...")
-        inFile = open(WORDLIST_FILENAME, 'r')
-        line = inFile.readline()
-        inFile.close()
-        self._wordList = line.split()
-        print(len(self._wordList), "words loaded.")
+
+        try:
+            inFile = open(WORDLIST_FILENAME, 'r')
+            line = inFile.readline()
+            inFile.close()
+        except:
+            print("Erro, occured one error during the archive manipulation. Ending execution.")
+            exit()
+        else:
+            self._wordList = line.split()
+            print(len(self._wordList), "words loaded.")
 
 
 def hangman():
@@ -120,21 +127,21 @@ def hangman():
     assistant.loadWordList
 
     secretWord = SecretWord(random.choice(assistant.wordList))
-    while not assistant.isValidSecretWord(secretWord.numOfNotFoundLetters):
+    while not assistant.isValidTamSecretWord(secretWord.numOfNotFoundLetters):
         secretWord = SecretWord(random.choice(assistant.wordList))
 
-    assistant.printWelcomeText(secretWord.numOfLetters,
-                               secretWord.numOfNotFoundLetters)
+    assistant.printWelcomeText(letters=secretWord.numOfLetters,
+                               distinctLetters=secretWord.numOfNotFoundLetters)
     print('-------------')
 
     while not secretWord.wasWordFound and not assistant.isGameOver:
         assistant.printChancesRemaing
         assistant.printAvaliableLetters
         assistant.askGuess
-        assistant.evaluateGuess(secretWord.notFoundLetters,
-                                secretWord.foundLetters)
-        assistant.printResultOfEvaluate(secretWord.numOfNotFoundLetters,
-                                        secretWord.wordFound)
+        assistant.evaluateGuess(notFoundLetters=secretWord.notFoundLetters,
+                                foundLetters=secretWord.foundLetters)
+        assistant.printResultOfEvaluate(lettersLeft=secretWord.numOfNotFoundLetters,
+                                        wordFound=secretWord.wordFound)
         print('------------')
     else:
         if secretWord.wasWordFound:
