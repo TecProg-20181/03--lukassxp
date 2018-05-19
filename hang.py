@@ -7,10 +7,18 @@ NUM_CHANCES = 8
 
 class SecretWord():
     def __init__(self, word):
-        self._word = word
+        self._word = self.validSecretWord(word=word)
         self._numOfLetters = len(word)
         self._notFoundLetters = set(self._word)
         self._foundLetters = set()
+
+    def validSecretWord(self, word):
+        if not word.isalpha():
+            print('Error, the load choice from archive contains',
+                  'non alphabethic characters. Ending execution.')
+            exit()
+        else:
+            return word.lower()
 
     @property
     def word(self):
@@ -114,12 +122,17 @@ class AssistantOfHangman():
             inFile = open(WORDLIST_FILENAME, 'r')
             line = inFile.readline()
             inFile.close()
-        except:
-            print("Erro, occured one error during the archive manipulation. Ending execution.")
+        except IOError:
+            print("Occured one error during the archive",
+                  "manipulation. Ending execution.")
             exit()
         else:
             self._wordList = line.split()
-            print(len(self._wordList), "words loaded.")
+            temp = len(self._wordList)
+            if temp is 0:
+                print('None word found in archive, ending execution.')
+                exit()
+            print(temp, 'words loaded.')
 
 
 def hangman():
